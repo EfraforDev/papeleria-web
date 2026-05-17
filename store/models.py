@@ -3,9 +3,6 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
 from django.utils.text import slugify
 
-# ========================
-# 1. USUARIO PERSONALIZADO
-# ========================
 class Usuario(AbstractUser):
     """Usuario del sistema con roles diferenciados"""
     ROLES = [
@@ -38,9 +35,7 @@ class Usuario(AbstractUser):
     def __str__(self):
         return f"{self.get_full_name() or self.username} ({self.get_rol_display()})"
 
-# ========================
-# 2. CATEGORÍA (CON IMAGEN)
-# ========================
+
 class Categoria(models.Model):
     """Categorías de productos con imágenes"""
     nombre = models.CharField(max_length=100, unique=True)
@@ -78,9 +73,7 @@ class Categoria(models.Model):
         return sum(p.stock for p in self.productos.filter(activo=True))
 
 
-# ========================
-# 3. PRODUCTO
-# ========================
+
 class Producto(models.Model):
     """Productos del inventario"""
     ESTADO_CHOICES = [
@@ -164,9 +157,7 @@ class Producto(models.Model):
         return self.stock > 0 and self.activo
 
 
-# ========================
-# 4. VENTA
-# ========================
+
 class Venta(models.Model):
     """Registro de ventas del sistema"""
     numero_venta = models.CharField(
@@ -199,9 +190,6 @@ class Venta(models.Model):
         return f"Venta {self.numero_venta} - ${self.total}"
 
 
-# ========================
-# 5. DETALLE DE VENTA
-# ========================
 class DetalleVenta(models.Model):
     """Items individuales de cada venta"""
     venta = models.ForeignKey(
@@ -232,9 +220,7 @@ class DetalleVenta(models.Model):
         return f"{self.producto.nombre} x{self.cantidad}"
 
 
-# ========================
-# 6. MOVIMIENTO DE STOCK
-# ========================
+
 class MovimientoStock(models.Model):
     """Log de todos los movimientos de stock"""
     TIPO_MOVIMIENTO = [
