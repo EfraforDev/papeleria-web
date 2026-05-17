@@ -547,36 +547,28 @@ tbody tr:hover {
         display: block;
     }
 
-    /* Sidebar */
-    .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-        padding-bottom: 10px;
-    }
-
+   /* Sidebar móvil */
     .sidebar-header {
         text-align: center;
         padding: 20px;
     }
 
     .sidebar-menu {
-        display: flex;
-        overflow-x: auto;
-        white-space: nowrap;
-        gap: 10px;
-        padding: 10px;
+        display: block;
+        overflow: visible;
+        white-space: normal;
+        padding: 10px 0;
     }
 
     .sidebar-menu li {
-        flex: 0 0 auto;
+        width: 100%;
     }
 
     .sidebar-menu a {
-        padding: 12px 18px;
-        border-radius: 10px;
+        display: flex;
+        width: 100%;
+        padding: 14px 20px;
     }
-
     /* Contenido */
     .main-content {
         margin-left: 0;
@@ -686,15 +678,8 @@ tbody tr:hover {
     }
 }
 
-.mobile-menu-btn {
-    display: none;
-}
-
-.sidebar-overlay {
-    display: none;
-}
-
 @media (max-width: 768px) {
+
     .mobile-menu-btn {
         display: flex;
         position: fixed;
@@ -720,6 +705,7 @@ tbody tr:hover {
         height: 100vh;
         z-index: 10000;
         transition: left 0.3s ease;
+        overflow-y: auto;
     }
 
     .sidebar.active {
@@ -738,4 +724,11 @@ tbody tr:hover {
         margin-left: 0;
         padding-top: 70px;
     }
+}
+.mobile-menu-btn {
+    display: none;
+}
+
+.sidebar-overlay {
+    display: none;
 }
