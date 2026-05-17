@@ -46,9 +46,14 @@
                     <i class="fas fa-cog"></i> Administración
                 </a></li>
                 {% endif %}
-                <li style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;"><a href="/logout/">
-                    <i class="fas fa-sign-out-alt"></i> Salir
-                </a></li>
+                <li style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+                    <form method="POST" action="{% url 'store:logout' %}" style="margin:0;">
+                        {% csrf_token %}
+                        <button type="submit" class="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i> Salir
+                        </button>
+                    </form>
+                </li>
             </ul>
             
             

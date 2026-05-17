@@ -407,6 +407,21 @@ tbody tr:hover {
     font-size: 0.8rem;
 }
 
+.logout-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    width: 100%;
+    padding: 14px 20px;
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+}
+
+.logout-btn:hover {
+    background: rgba(255,255,255,0.1);
+}
+
 /* ========================
    MODAL
    ======================== */
