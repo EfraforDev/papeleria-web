@@ -19,7 +19,6 @@ class Usuario(AbstractUser):
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     es_activo = models.BooleanField(default=True)
     
-    # ⚠️ Agregar related_name personalizados
     groups = models.ManyToManyField(
         'auth.Group',
         related_name='store_usuario_groups',  # ← AGREGAR ESTO
