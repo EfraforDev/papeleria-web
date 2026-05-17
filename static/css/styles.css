@@ -538,3 +538,150 @@ tbody tr:hover {
     flex: 1;
     justify-content: center;
 }
+
+
+@media (max-width: 768px) {
+
+    /* Layout principal */
+    .main-container {
+        display: block;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding-bottom: 10px;
+    }
+
+    .sidebar-header {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .sidebar-menu {
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .sidebar-menu li {
+        flex: 0 0 auto;
+    }
+
+    .sidebar-menu a {
+        padding: 12px 18px;
+        border-radius: 10px;
+    }
+
+    /* Contenido */
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 15px;
+    }
+
+    /* Topbar */
+    .topbar {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+        padding: 15px;
+    }
+
+    .topbar-left,
+    .topbar-right {
+        width: 100%;
+    }
+
+    .topbar-right {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .topbar-search input {
+        width: 100%;
+    }
+
+    /* Botones */
+    .btn,
+    .btn-primary,
+    .btn-new,
+    .btn-danger,
+    .btn-secondary {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Headers */
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .page-header h1 {
+        font-size: 2rem;
+    }
+
+    /* KPI cards */
+    .kpi-grid,
+    .stats-grid,
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Tablas */
+    .table-container {
+        overflow-x: auto;
+        border-radius: 12px;
+    }
+
+    table {
+        min-width: 750px;
+    }
+
+    /* Formularios */
+    form {
+        width: 100%;
+    }
+
+    input,
+    select,
+    textarea {
+        width: 100%;
+        font-size: 16px;
+    }
+
+    /* Modales */
+    .modal-contenido {
+        width: 90%;
+        padding: 25px;
+    }
+
+    /* Cards */
+    .card,
+    .table-container {
+        width: 100%;
+    }
+
+    /* Imágenes */
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* Acciones */
+    .acciones-card {
+        flex-direction: column;
+    }
+
+    .acciones-card .btn {
+        width: 100%;
+    }
+}
