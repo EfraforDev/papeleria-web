@@ -12,9 +12,14 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
     <div class="main-container">
         <!-- SIDEBAR -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <h2><i class="fas fa-pen-fancy"></i> Papelería Central</h2>
                 <p>Sistema de Gestión</p>
@@ -78,5 +83,16 @@
 
     <script src="{% static 'js/main.js' %}"></script>
     {% block extra_js %}{% endblock %}
+    <script>
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.querySelector('.sidebar-overlay').classList.toggle('active');
+    }
+
+    function closeSidebar() {
+        document.getElementById('sidebar').classList.remove('active');
+        document.querySelector('.sidebar-overlay').classList.remove('active');
+    }
+    </script>
 </body>
 </html>

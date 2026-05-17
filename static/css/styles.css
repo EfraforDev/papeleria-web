@@ -685,3 +685,57 @@ tbody tr:hover {
         width: 100%;
     }
 }
+
+.mobile-menu-btn {
+    display: none;
+}
+
+.sidebar-overlay {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .mobile-menu-btn {
+        display: flex;
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 10001;
+        background: var(--primary-dark);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        width: 45px;
+        height: 45px;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        width: 260px;
+        height: 100vh;
+        z-index: 10000;
+        transition: left 0.3s ease;
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        z-index: 9999;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding-top: 70px;
+    }
+}
