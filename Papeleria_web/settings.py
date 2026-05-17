@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'Papeleria_web.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=config('DATABASE_URL', default='sqlite:///db.sqlite3'),
+        default=config('DATABASE_URL'),
         conn_max_age=600,
         conn_health_checks=True,
     )

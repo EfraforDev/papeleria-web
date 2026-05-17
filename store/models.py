@@ -52,7 +52,7 @@ class Categoria(models.Model):
         null=True,
         help_text="Imagen representativa de la categoría"
     )
-    slug = models.SlugField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True, blank=True)
     color_hex = models.CharField(
         max_length=7, 
         default='#003366',
