@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Nueva Venta - Papelería Central{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-shopping-cart"></i> Crear Venta</h1>
+</div>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+    <!-- CARRITO -->
+    <div class="table-container">
+        <div class="table-toolbar">
+            <h3 style="margin: 0;">Items de la Venta</h3>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Subtotal</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody id="carrito-items">
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 30px; color: #999;">
+                        El carrito está vacío
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- RESUMEN -->
+    <div class="table-container" style="height: fit-content;">
+        <div class="table-toolbar">
+            <h3 style="margin: 0;">Resumen</h3>
+        </div>
+        
+        <div style="padding: 20px;">
+            <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #ddd;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span>Subtotal:</span>
+                    <strong id="subtotal">$0.00</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span>Impuesto:</span>
+                    <strong id="impuesto">$0.00</strong>
+                </div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 1.2rem;">
+                <span><strong>Total:</strong></span>
+                <strong id="total" style="color: var(--accent-orange);">$0.00</strong>
+            </div>
+
+            <form method="POST" onsubmit="return prepararVenta();">
+                {% csrf_token %}
+                <input type="hidden" name="carrito" id="carrito-input">
+                <button type="submit" class="btn btn-new" style="width: 100%; justify-content: center; padding: 15px;">
+                    <i class="fas fa-check"></i> Confirmar Venta
+                </button>
+            </form>
+            
+            <a href="{% url 'store:ventas' %}" class="btn btn-secondary" style="width: 100%; justify-content: center; padding: 15px; margin-top: 10px;">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- PRODUCTOS DISPONIBLES -->
+<div class="table-container" style="margin-top: 20px;">
+    <div class="table-toolbar">
+        <h3 style="margin: 0;"><i class="fas fa-boxes"></i> Productos Disponibles</h3>
+        <input type="text" placeholder="🔍 Buscar producto..." 
+               style="padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos %}
+            <tr>
+                <td>{{ producto.nombre }}</td>
+                <td>${{ producto.precio_venta }}</td>
+                <td>
+                    {% if producto.stock > 0 %}
+                        <span class="badge badge-success">{{ producto.stock }}</span>
+                    {% else %}
+                        <span class="badge badge-danger">Agotado</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <button class="btn btn-primary btn-sm" 
+                            onclick="agregarAlCarrito({{ producto.id }}, '{{ producto.nombre }}', {{ producto.precio_venta }})">
+                        <i class="fas fa-plus"></i> Agregar
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if messages %}
+<div id="modalVentaConfirmada" class="modal-venta">
+    <div class="modal-contenido">
+        <i class="fas fa-check-circle"></i>
+        <h2>Venta confirmada</h2>
+
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+
+        <a href="{% url 'store:ventas' %}" class="btn btn-new">
+            Ver ventas
+        </a>
+    </div>
+</div>
+{% endif %}
+
+<script>
+let carritoVenta = [];
+
+function agregarAlCarrito(id, nombre, precio) {
+    const existente = carritoVenta.find(item => item.id === id);
+    if (existente) {
+        existente.cantidad++;
+    } else {
+        carritoVenta.push({ id, nombre, precio: Number(precio), cantidad: 1 });
+    }
+    actualizarCarrito();
+}
+
+function cambiarCantidad(id, cantidad) {
+    const item = carritoVenta.find(item => item.id === id);
+    if (!item) return;
+    item.cantidad = Math.max(1, Number(cantidad));
+    actualizarCarrito();
+}
+
+function eliminarDelCarrito(id) {
+    carritoVenta = carritoVenta.filter(item => item.id !== id);
+    actualizarCarrito();
+}
+
+function prepararVenta() {
+    if (carritoVenta.length === 0) {
+        alert('Agrega al menos un producto.');
+        return false;
+    }
+    document.getElementById('carrito-input').value = JSON.stringify(carritoVenta);
+    return true;
+}
+
+function actualizarCarrito() {
+    let html = '';
+    let subtotal = 0;
+
+    carritoVenta.forEach(item => {
+        const itemTotal = item.precio * item.cantidad;
+        subtotal += itemTotal;
+        html += `
+            <tr>
+                <td>${item.nombre}</td>
+                <td><input type="number" value="${item.cantidad}" min="1" onchange="cambiarCantidad(${item.id}, this.value)" style="width: 60px; padding: 5px;"></td>
+                <td>$${Number(item.precio).toFixed(2)}</td>
+                <td>$${itemTotal.toFixed(2)}</td>
+                <td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarDelCarrito(${item.id})">Eliminar</button></td>
+            </tr>
+        `;
+    });
+
+    if (carritoVenta.length === 0) {
+        html = '<tr><td colspan="5" style="text-align: center; padding: 30px; color: #999;">El carrito está vacío</td></tr>';
+    }
+
+    document.getElementById('carrito-items').innerHTML = html;
+
+    const impuesto = 0;
+    const total = subtotal + impuesto;
+
+    document.getElementById('subtotal').textContent = '$' + subtotal.toFixed(2);
+    document.getElementById('impuesto').textContent = '$' + impuesto.toFixed(2);
+    document.getElementById('total').textContent = '$' + total.toFixed(2);
+}
+</script>
+{% endblock %}

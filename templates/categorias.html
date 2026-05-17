@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Categorías - Papelería Central{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+<div id="modalSuccess" class="modal-venta">
+    <div class="modal-contenido">
+        <i class="fas fa-check-circle"></i>
+
+        <h2>Acción realizada</h2>
+
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+
+        <button type="button" class="btn btn-new" onclick="cerrarModalSuccess()">
+            Continuar
+        </button>
+    </div>
+</div>
+{% endif %}
+
+<div class="page-header">
+    <h1><i class="fas fa-folder"></i> Categorías</h1>
+
+    <a href="{% url 'store:crear_categoria' %}" class="btn btn-new">
+        <i class="fas fa-plus"></i> Nueva Categoría
+    </a>
+</div>
+
+<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:20px;">
+
+    {% for categoria in categorias %}
+
+    <div class="table-container" style="overflow:hidden;">
+
+        {% if categoria.imagen %}
+            <img src="{{ categoria.imagen.url }}"
+                 style="width:100%; height:150px; object-fit:cover;">
+        {% else %}
+            <div style="
+                width:100%;
+                height:150px;
+                background:{{ categoria.color_hex }};
+                display:flex;
+                align-items:center;
+                justify-content:center;
+            ">
+                <i class="fas fa-image"
+                   style="font-size:3rem; opacity:0.3; color:white;">
+                </i>
+            </div>
+        {% endif %}
+
+        <div style="padding:20px;">
+
+            <h3 style="margin:0 0 10px 0; color:var(--primary-dark);">
+                {{ categoria.nombre }}
+            </h3>
+
+            <p style="
+                margin:0 0 15px 0;
+                color:#666;
+                font-size:0.9rem;
+            ">
+                {{ categoria.descripcion|truncatewords:10 }}
+            </p>
+
+            <div style="display:flex; gap:10px; margin-bottom:15px;">
+                <span class="badge badge-info"
+                      style="background:{{ categoria.color_hex }}; color:white;">
+                    <i class="fas fa-boxes"></i>
+                    {{ categoria.obtener_total_stock }} productos
+                </span>
+            </div>
+
+            <div class="acciones-card">
+
+                <a href="{% url 'store:editar_categoria' categoria.id %}"
+                   class="btn btn-primary btn-sm">
+                    <i class="fas fa-edit"></i> Editar
+                </a>
+
+                <button type="button"
+                        class="btn btn-danger btn-sm"
+                        onclick="abrirModalEliminar(
+                            {{ categoria.id }},
+                            '{{ categoria.nombre }}'
+                        )">
+
+                    <i class="fas fa-trash"></i> Eliminar
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+
+    {% empty %}
+
+    <div style="
+        grid-column:1 / -1;
+        text-align:center;
+        padding:40px;
+    ">
+        <i class="fas fa-inbox"
+           style="font-size:3rem; opacity:0.3;">
+        </i>
+
+        <p style="color:#999; margin-top:15px;">
+            No hay categorías creadas
+        </p>
+    </div>
+
+    {% endfor %}
+
+</div>
+
+<!-- MODAL ELIMINAR -->
+
+<div id="modalEliminar"
+     class="modal-venta"
+     style="display:none;">
+
+    <div class="modal-contenido">
+
+        <i class="fas fa-trash"
+           style="color:#dc3545;">
+        </i>
+
+        <h2>Eliminar categoría</h2>
+
+        <p id="textoEliminar"></p>
+
+        <div style="
+            display:flex;
+            gap:10px;
+            margin-top:20px;
+        ">
+
+            <button type="button"
+                    class="btn btn-secondary"
+                    style="flex:1;"
+                    onclick="cerrarModalEliminar()">
+
+                Cancelar
+
+            </button>
+
+            <form id="formEliminar"
+                  method="POST"
+                  style="flex:1;">
+
+                {% csrf_token %}
+
+                <button type="submit"
+                        class="btn btn-danger"
+                        style="width:100%;">
+
+                    Eliminar
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function abrirModalEliminar(id, nombre) {
+
+    document.getElementById('textoEliminar').innerHTML =
+        `¿Seguro que deseas eliminar <strong>${nombre}</strong>?`;
+
+    document.getElementById('formEliminar').action =
+        `/categorias/${id}/eliminar/`;
+
+    document.getElementById('modalEliminar').style.display = 'flex';
+}
+
+function cerrarModalEliminar() {
+
+    document.getElementById('modalEliminar').style.display = 'none';
+}
+
+function cerrarModalSuccess() {
+    const modal = document.getElementById('modalSuccess');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+</script>
+
+{% endblock %}

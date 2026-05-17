@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Usuarios - Papelería Central{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-users"></i> Usuarios del sistema</h1>
+    <a href="{% url 'store:crear_usuario' %}" class="btn btn-new"><i class="fas fa-user-plus"></i> Nuevo usuario</a>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr><th>Usuario</th><th>Nombre</th><th>Rol</th><th>Email</th><th>Activo</th><th>Fecha</th></tr>
+        </thead>
+        <tbody>
+            {% for u in usuarios %}
+            <tr>
+                <td><strong>{{ u.username }}</strong></td>
+                <td>{{ u.get_full_name|default:'—' }}</td>
+                <td><span class="badge badge-success">{{ u.get_rol_display }}</span></td>
+                <td>{{ u.email|default:'—' }}</td>
+                <td>{% if u.is_active and u.es_activo %}Sí{% else %}No{% endif %}</td>
+                <td>{{ u.date_joined|date:'d/m/Y H:i' }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" style="text-align:center; padding: 25px;">No hay usuarios.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

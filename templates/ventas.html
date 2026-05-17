@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ventas - Papelería Central{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-cash-register"></i> Registro de Ventas</h1>
+    <a href="{% url 'store:crear_venta' %}" class="btn btn-new">
+        <i class="fas fa-plus"></i> Nueva Venta
+    </a>
+</div>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Venta #</th>
+                <th>Vendedor</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for venta in ventas %}
+            <tr>
+                <td><strong>{{ venta.numero_venta }}</strong></td>
+                <td>{{ venta.vendedor.get_full_name|default:"Sistema" }}</td>
+                <td>{{ venta.cantidad_items }}</td>
+                <td><strong>${{ venta.total }}</strong></td>
+                <td>{{ venta.fecha_venta|date:"d/m/Y H:i" }}</td>
+                <td>
+                    {% if venta.estado == 'completada' %}
+                        <span class="badge badge-success">Completada</span>
+                    {% else %}
+                        <span class="badge badge-danger">Cancelada</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <button class="btn btn-primary btn-sm" onclick="verDetalles({{ venta.id }})">
+                        <i class="fas fa-eye"></i> Ver
+                    </button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 30px; color: #999;">
+                    <i class="fas fa-inbox" style="font-size: 2rem;"></i>
+                    <p>No hay ventas registradas</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div id="modalDetalleVenta" class="modal-venta" style="display:none;">
+    <div class="modal-contenido">
+        <i class="fas fa-receipt"></i>
+        <h2>Detalle de venta</h2>
+        <div id="contenidoDetalleVenta"></div>
+
+        <button class="btn btn-secondary" onclick="cerrarDetalleVenta()">
+            Cerrar
+        </button>
+    </div>
+</div>
+
+<script>
+const ventasDetalle = {
+    {% for venta in ventas %}
+    "{{ venta.id }}": {
+        numero: "{{ venta.numero_venta }}",
+        vendedor: "{{ venta.vendedor.get_full_name|default:'Sistema' }}",
+        items: "{{ venta.cantidad_items }}",
+        total: "{{ venta.total }}",
+        fecha: "{{ venta.fecha_venta|date:'d/m/Y H:i' }}",
+        estado: "{{ venta.estado }}"
+    },
+    {% endfor %}
+};
+
+function verDetalles(ventaId) {
+    const venta = ventasDetalle[ventaId];
+
+    document.getElementById("contenidoDetalleVenta").innerHTML = `
+        <p><strong>Venta:</strong> ${venta.numero}</p>
+        <p><strong>Vendedor:</strong> ${venta.vendedor}</p>
+        <p><strong>Items:</strong> ${venta.items}</p>
+        <p><strong>Total:</strong> $${venta.total}</p>
+        <p><strong>Fecha:</strong> ${venta.fecha}</p>
+        <p><strong>Estado:</strong> ${venta.estado}</p>
+    `;
+
+    document.getElementById("modalDetalleVenta").style.display = "flex";
+}
+
+function cerrarDetalleVenta() {
+    document.getElementById("modalDetalleVenta").style.display = "none";
+}
+</script>
+{% endblock %}

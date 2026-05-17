@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Inventario - Papelería Central{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+<div id="modalSuccess" class="modal-venta">
+    <div class="modal-contenido">
+        <i class="fas fa-check-circle"></i>
+
+        <h2>Producto actualizado</h2>
+
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+
+        <button class="btn btn-new" onclick="cerrarModal()">
+            Continuar
+        </button>
+    </div>
+</div>
+{% endif %}
+
+<div class="page-header">
+    <h1><i class="fas fa-boxes"></i> Inventario Global</h1>
+    
+</div>
+
+<!-- FILTROS -->
+<div class="table-container" style="margin-bottom: 20px;">
+    <form method="GET" class="table-toolbar">
+        <input 
+            type="text" 
+            name="busqueda" 
+            placeholder="🔍 Buscar por nombre o SKU..."
+            value="{{ busqueda }}"
+            style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"
+        >
+        
+        <select name="categoria" style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-left: 10px;">
+            <option value="">Todas las Categorías</option>
+            {% for cat in categorias %}
+            <option value="{{ cat.id }}" {% if categoria_seleccionada == cat.id|stringformat:"s" %}selected{% endif %}>
+                {{ cat.nombre }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <select name="estado" style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-left: 10px;">
+            <option value="">Todos los Estados</option>
+            <option value="bajo_stock" {% if estado_seleccionado == 'bajo_stock' %}selected{% endif %}>Bajo Stock</option>
+            <option value="agotado" {% if estado_seleccionado == 'agotado' %}selected{% endif %}>Agotado</option>
+        </select>
+
+        <button type="submit" class="btn btn-primary" style="margin-left: 10px;">
+            <i class="fas fa-filter"></i> Filtrar
+        </button>
+        
+        <a href="{% url 'store:inventario' %}" class="btn btn-secondary" style="margin-left: 5px;">
+            <i class="fas fa-times"></i> Limpiar
+        </a>
+    </form>
+</div>
+
+<!-- TABLA DE INVENTARIO -->
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>SKU</th>
+                <th>Categoría</th>
+                <th>Precio Costo</th>
+                <th>Precio Venta</th>
+                <th>Margen %</th>
+                <th>Stock</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos %}
+            <tr>
+                <td>
+                    {% if producto.imagen %}
+                        <img src="{{ producto.imagen.url }}" 
+                             style="width: 30px; height: 30px; border-radius: 3px; margin-right: 10px; object-fit: cover; vertical-align: middle;">
+                    {% endif %}
+                    <strong>{{ producto.nombre }}</strong>
+                </td>
+                <td><code>{{ producto.sku }}</code></td>
+                <td>{{ producto.categoria.nombre }}</td>
+                <td>${{ producto.precio_costo }}</td>
+                <td>${{ producto.precio_venta }}</td>
+                <td>
+                    <strong style="color: {% if producto.margen_ganancia > 30 %}#28a745{% elif producto.margen_ganancia > 15 %}#ffc107{% else %}#dc3545{% endif %};">
+                        {{ producto.margen_ganancia|floatformat:1 }}%
+                    </strong>
+                </td>
+                <td>
+                    {% if producto.stock > producto.stock_minimo %}
+                        <span class="badge badge-success">{{ producto.stock }}</span>
+                    {% elif producto.stock > 0 %}
+                        <span class="badge badge-warning">{{ producto.stock }}</span>
+                    {% else %}
+                        <span class="badge badge-danger">0</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if producto.estado == 'disponible' %}
+                        <span class="badge badge-success">Disponible</span>
+                    {% elif producto.estado == 'bajo_stock' %}
+                        <span class="badge badge-warning">Bajo Stock</span>
+                    {% else %}
+                        <span class="badge badge-danger">Agotado</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'store:editar_producto' producto.id %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-edit"></i> Editar
+                    </a>
+                    <button type="button"
+                            class="btn btn-danger btn-sm"
+                            onclick="abrirModalEliminarProducto({{ producto.id }}, '{{ producto.nombre }}')">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="9" style="text-align: center; padding: 30px; color: #999;">
+                    <i class="fas fa-inbox" style="font-size: 2rem;"></i>
+                    <p>No hay productos en el inventario</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div style="margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 5px;">
+    <strong>Total Productos:</strong> {{ productos|length }} | 
+    <strong>Valor Total Inventario:</strong> ${{ total_valor|default:"0.00" }}
+</div>
+<div id="modalEliminarProducto" class="modal-venta" style="display:none;">
+    <div class="modal-contenido">
+        <i class="fas fa-trash" style="color:#dc3545;"></i>
+        <h2>Eliminar producto</h2>
+        <p id="textoEliminarProducto"></p>
+
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button type="button" class="btn btn-secondary" style="flex:1;" onclick="cerrarModalEliminarProducto()">
+                Cancelar
+            </button>
+
+            <form id="formEliminarProducto" method="POST" style="flex:1;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger" style="width:100%;">
+                    Eliminar
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+function abrirModalEliminarProducto(id, nombre) {
+    document.getElementById('textoEliminarProducto').innerHTML =
+        `¿Seguro que deseas eliminar <strong>${nombre}</strong>?`;
+
+    document.getElementById('formEliminarProducto').action =
+        `/producto/${id}/eliminar/`;
+
+    document.getElementById('modalEliminarProducto').style.display = 'flex';
+}
+
+function cerrarModalEliminarProducto() {
+    document.getElementById('modalEliminarProducto').style.display = 'none';
+}
+function cerrarModal() {
+    document.getElementById('modalSuccess').style.display = 'none';
+}
+</script>
+
+
+{% endblock %}

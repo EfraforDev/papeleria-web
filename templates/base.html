@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Papelería Central - Sistema de Gestión{% endblock %}</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="main-container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-pen-fancy"></i> Papelería Central</h2>
+                <p>Sistema de Gestión</p>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li><a href="/" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    <i class="fas fa-home"></i> Inicio
+                </a></li>
+                <li><a href="/inventario/" class="{% if request.resolver_match.url_name == 'inventario' %}active{% endif %}">
+                    <i class="fas fa-boxes"></i> Inventario
+                </a></li>
+                <li><a href="/categorias/" class="{% if request.resolver_match.url_name == 'categorias' %}active{% endif %}">
+                    <i class="fas fa-folder"></i> Categorías
+                </a></li>
+                <li><a href="/ventas/" class="{% if request.resolver_match.url_name == 'ventas' %}active{% endif %}">
+                    <i class="fas fa-cash-register"></i> Ventas
+                </a></li>
+                {% if user.rol == 'admin' or user.is_superuser %}
+                <li><a href="/usuarios/" class="{% if request.resolver_match.url_name == 'usuarios' %}active{% endif %}">
+                    <i class="fas fa-users"></i> Usuarios
+                </a></li>
+                <li><a href="/admin/">
+                    <i class="fas fa-cog"></i> Administración
+                </a></li>
+                {% endif %}
+                <li style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;"><a href="/logout/">
+                    <i class="fas fa-sign-out-alt"></i> Salir
+                </a></li>
+            </ul>
+            
+            <div style="position: absolute; bottom: 20px; left: 20px; right: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; text-align: center; font-size: 0.85rem; opacity: 0.8;">
+                <i class="fas fa-file-invoice"></i> v1.0
+            </div>
+        </aside>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="main-content">
+            <!-- TOPBAR -->
+            <div class="topbar">
+                <div class="topbar-search">
+                    
+                </div>
+                
+                <div class="topbar-right">
+                    <a href="{% url 'store:crear_producto' %}" class="btn btn-new" title="Nuevo producto">
+                        <i class="fas fa-plus"></i> Nuevo producto
+                    </a>
+                    
+                    <div class="user-menu">
+                        <div class="user-avatar">{{ user.first_name|first|upper }}</div>
+                        <span>{{ user.get_full_name|default:user.username }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTENEDOR -->
+            <div class="container-fluid">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
