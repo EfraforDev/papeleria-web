@@ -539,6 +539,13 @@ tbody tr:hover {
     justify-content: center;
 }
 
+.mobile-menu-btn {
+    display: none;
+}
+
+.sidebar-overlay {
+    display: none;
+}
 
 @media (max-width: 768px) {
 
@@ -725,10 +732,4 @@ tbody tr:hover {
         padding-top: 70px;
     }
 }
-.mobile-menu-btn {
-    display: none;
-}
 
-.sidebar-overlay {
-    display: none;
-}
