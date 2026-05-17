@@ -42,7 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary',
+    'cloudinary_storage',
     'store',
+    
 ]
 
 MIDDLEWARE = [
@@ -136,3 +139,11 @@ AUTH_USER_MODEL = 'store.Usuario'
 LOGIN_URL = 'store:login'
 LOGIN_REDIRECT_URL = 'store:dashboard'
 LOGOUT_REDIRECT_URL = 'store:login'
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=''),
+    'API_KEY': config('CLOUDINARY_API_KEY', default=''),
+    'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
