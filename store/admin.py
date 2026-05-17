@@ -1,12 +1,39 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+
 from .models import Categoria, Producto, Venta, DetalleVenta, MovimientoStock, Usuario
 
 
 @admin.register(Usuario)
-class UsuarioAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'rol', 'is_active', 'is_staff', 'is_superuser')
-    list_filter = ('rol', 'is_active', 'is_staff')
-    search_fields = ('username', 'email', 'first_name', 'last_name')
+class UsuarioAdmin(UserAdmin):
+
+    list_display = (
+        'username',
+        'email',
+        'rol',
+        'is_active',
+        'is_staff',
+        'is_superuser'
+    )
+
+    list_filter = (
+        'rol',
+        'is_active',
+        'is_staff'
+    )
+
+    search_fields = (
+        'username',
+        'email',
+        'first_name',
+        'last_name'
+    )
+
+    fieldsets = UserAdmin.fieldsets + (
+        ('Información adicional', {
+            'fields': ('rol',)
+        }),
+    )
 
 
 @admin.register(Categoria)
