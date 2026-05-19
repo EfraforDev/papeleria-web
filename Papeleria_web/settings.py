@@ -14,6 +14,7 @@ from pathlib import Path
 from decouple import config
 import os
 import pymysql
+import dj_database_url
 
 pymysql.install_as_MySQLdb()
 
@@ -31,7 +32,7 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-desarrollo-cambiar-en
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split(',')
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -85,7 +86,7 @@ WSGI_APPLICATION = 'Papeleria_web.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('MYSQLDATABASE', default='papeleria'),
+        'NAME': config('MYSQLDATABASE', default='railway'),
         'USER': config('MYSQLUSER', default='root'),
         'PASSWORD': config('MYSQLPASSWORD', default=''),
         'HOST': config('MYSQLHOST', default='localhost'),
