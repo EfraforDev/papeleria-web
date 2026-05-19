@@ -89,17 +89,9 @@ WSGI_APPLICATION = 'Papeleria_web.wsgi.application'
 
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('MYSQLDATABASE'),
-        'USER': config('MYSQLUSER'),
-        'PASSWORD': config('MYSQLPASSWORD'),
-        'HOST': config('MYSQLHOST'),
-        'PORT': config('MYSQLPORT'),
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-        },
-    }
+    'default': dj_database_url.parse(
+        config('MYSQL_PUBLIC_URL')
+    )
 }
 
 
