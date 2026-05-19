@@ -36,9 +36,8 @@ ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = config(
     'CSRF_TRUSTED_ORIGINS',
-    default='https://web-production-48d85.up.railway.app/'
+    default='https://web-production-48d85.up.railway.app'
 ).split(',')
-
 
 # Application definition
 
@@ -155,3 +154,12 @@ CLOUDINARY_STORAGE = {
 }
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
