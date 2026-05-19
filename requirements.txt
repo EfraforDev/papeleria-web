@@ -9,8 +9,8 @@ django-cors-headers==4.9.0
 gunicorn
 idna==3.15
 pillow==12.1.1
-PyMySQL
 mysqlclient==2.2.7
+PyMySQL==1.1.1
 python-decouple==3.8
 requests==2.34.2
 sqlparse==0.5.5
