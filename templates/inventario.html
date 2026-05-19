@@ -8,28 +8,12 @@
 {% if messages %}
 <div id="modalSuccess" class="modal-venta">
     <div class="modal-contenido">
+        <i class="fas fa-check-circle" style="color:#28a745;"></i>
+
+        <h2>Operación realizada</h2>
 
         {% for message in messages %}
-
-            {% if 'eliminado' in message|stringformat:"s" %}
-                <i class="fas fa-trash-alt" style="color:#dc3545;"></i>
-                <h2>Producto eliminado</h2>
-
-            {% elif 'actualizado' in message|stringformat:"s" %}
-                <i class="fas fa-check-circle" style="color:#28a745;"></i>
-                <h2>Producto actualizado</h2>
-
-            {% elif 'registrado' in message|stringformat:"s" or 'creado' in message|stringformat:"s" %}
-                <i class="fas fa-plus-circle" style="color:#007bff;"></i>
-                <h2>Producto registrado</h2>
-
-            {% else %}
-                <i class="fas fa-check-circle" style="color:#28a745;"></i>
-                <h2>Operación realizada</h2>
-            {% endif %}
-
             <p>{{ message }}</p>
-
         {% endfor %}
 
         <button class="btn btn-new" onclick="cerrarModal()">
