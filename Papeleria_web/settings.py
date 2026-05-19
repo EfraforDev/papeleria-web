@@ -34,9 +34,11 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://web-production-48d85.up.railway.app/',
-]
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS',
+    default='https://web-production-48d85.up.railway.app/'
+).split(',')
+
 
 # Application definition
 
