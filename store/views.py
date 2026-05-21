@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponseForbidden
 from django.views.decorators.http import require_http_methods
@@ -38,6 +39,50 @@ def eliminar_categoria(request, pk):
         )
 
     return redirect('store:categorias')
+
+def login_view(request):
+
+    if request.user.is_authenticated:
+        return redirect('store:dashboard')
+
+    if request.method == 'POST':
+
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        existe_usuario = Usuario.objects.filter(
+            username=username
+        ).first()
+
+        if not existe_usuario:
+
+            messages.error(
+                request,
+                'El usuario no existe. Favor de contactar al administrador para solicitar su alta.'
+            )
+
+            return redirect('store:login')
+
+        user = authenticate(
+            request,
+            username=username,
+            password=password
+        )
+
+        if user is None:
+
+            messages.error(
+                request,
+                'Usuario o contraseña incorrectos.'
+            )
+
+            return redirect('store:login')
+
+        login(request, user)
+
+        return redirect('store:dashboard')
+
+    return render(request, 'login.html')
 
 @login_required(login_url='store:login')  
 def dashboard(request):
