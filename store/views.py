@@ -218,13 +218,16 @@ def editar_producto(request, pk):
 def eliminar_producto(request, pk):
     if request.method == 'POST':
         producto = get_object_or_404(Producto, pk=pk)
-        producto.activo = False
-        producto.save()
+        nombre_producto = producto.nombre
 
-        messages.success(request, f'Producto "{producto.nombre}" eliminado correctamente.')
+        producto.delete()
+
+        messages.success(
+            request,
+            f'Producto "{nombre_producto}" eliminado correctamente.'
+        )
 
     return redirect('store:inventario')
-
 
 
 @login_required(login_url='store:login')  
