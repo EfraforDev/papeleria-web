@@ -157,9 +157,25 @@ def crear_producto(request):
     """Crear nuevo producto"""
     if request.method == 'POST':
         try:
+            nombre = request.POST['nombre'].strip()
+            sku = request.POST['sku'].strip()
+
+            if Producto.objects.filter(nombre__iexact=nombre).exists():
+                context = {
+                    'categorias': Categoria.objects.filter(activa=True),
+                    'error': f'Ya existe un producto registrado con el nombre "{nombre}". Usa otro nombre o edita el producto existente.'
+                }
+                return render(request, 'crear_producto.html', context)
+
+            if Producto.objects.filter(sku=sku).exists():
+                context = {
+                    'categorias': Categoria.objects.filter(activa=True),
+                    'error': f'Ya existe un producto registrado con el SKU "{sku}".'
+                }
+                return render(request, 'crear_producto.html', context)
             producto = Producto.objects.create(
-                nombre=request.POST['nombre'],
-                sku=request.POST['sku'],
+                nombre=nombre,
+                sku=sku,    
                 descripcion=request.POST.get('descripcion', ''),
                 precio_costo=request.POST['precio_costo'],
                 precio_venta=request.POST['precio_venta'],
